@@ -157,7 +157,7 @@ public class GameManager : MonoBehaviour
 
     private void HitDealer()
     {
-        while (dealerScript.handValue < 16 && dealerScript.cardIndex < 10)
+        while (dealerScript.handValue < 17 && dealerScript.cardIndex < 10)
         {
             dealerScript.GetCard();
             dealerScoreText.text = "Hand: " + dealerScript.handValue.ToString();
