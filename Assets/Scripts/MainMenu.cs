@@ -15,6 +15,21 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene("Rules");
     }
 
+    public void RulesBack()
+    {
+        SceneManager.LoadScene("Menu");
+    }
+
+    public void Map()
+    {
+        SceneManager.LoadScene("Map");
+    }
+
+    public void LevelOne()
+    {
+        SceneManager.LoadScene("Game");
+    }
+
     public void QuitGame()
     {
         Application.Quit();
