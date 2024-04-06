@@ -18,6 +18,24 @@ EditorBuildSettings:
     path: Assets/Scenes/Map.unity
     guid: 88db963b7aa3ef94fabdafe268af994e
   - enabled: 1
-    path: Assets/Scenes/Game.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
+    path: Assets/Scenes/GameFish.unity
+    guid: ce79497f08ad6b240897fc549afc1882
+  - enabled: 1
+    path: Assets/Scenes/GameShark.unity
+    guid: fbb46fba407b2c44292eeb65a0a6a2de
+  - enabled: 1
+    path: Assets/Scenes/GameKraken.unity
+    guid: 7080f9d8c60dd6742ad52d5a998afd63
+  - enabled: 1
+    path: Assets/Scenes/Credit.unity
+    guid: 911b879d2669afb44a5a7052b5e890bd
+  - enabled: 1
+    path: Assets/Scenes/IntroFish.unity
+    guid: 9f714a4caa552514b96ed21aa9ce46bb
+  - enabled: 1
+    path: Assets/Scenes/IntroShark.unity
+    guid: ecbafdf53d7b62b44be1b8e5a2732e10
+  - enabled: 1
+    path: Assets/Scenes/IntroKraken.unity
+    guid: 833a777b0bbc78e46af6465a9d9ed2b7
   m_configObjects: {}

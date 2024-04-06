@@ -2,28 +2,37 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
+    public int stage;
+    public int playerHealth;
+    public int dealerHealth;
+    public int startingItems;
+
     // Game Buttons
-    public Button dealBtn;
-    public Button hitBtn;
-    public Button standBtn;
-    public Button betBtn;
+    public UnityEngine.UI.Button dealBtn;
+    public UnityEngine.UI.Button hitBtn;
+    public UnityEngine.UI.Button standBtn;
+    public UnityEngine.UI.Button betBtn;
 
     // Cheats Implementation
     public Select selectScreen;
-    public Button magnifyingGlass;
-    public Button sunGlass;
-    public Button dagger;
-    public Button sword;
-    public Button rustySword;
-    public Button hook;
-    public Button cigar;
-    public Button glove;
+    public UnityEngine.UI.Button magnifyingGlass;
+    public UnityEngine.UI.Button sunGlass;
+    public UnityEngine.UI.Button dagger;
+    public UnityEngine.UI.Button sword;
+    public UnityEngine.UI.Button rustySword;
+    public UnityEngine.UI.Button hook;
+    public UnityEngine.UI.Button cigar;
+    public UnityEngine.UI.Button glove;
 
     // Initialize Cheat
     int magnifyingGlassN = 0;
@@ -57,10 +66,14 @@ public class GameManager : MonoBehaviour
     // public Text to access and update - hud
     public Text scoreText;
     public Text dealerScoreText;
-    public Text betsText;
+    public Text dealerCashText;
     public Text cashText;
     public Text mainText;
     public Text standBtnText;
+
+    // Game Ending Text
+    public Text gameEnd;
+    public UnityEngine.UI.Button returnMain;
 
     // Card hiding dealer's 2nd card
     public GameObject hideCard;
@@ -71,8 +84,30 @@ public class GameManager : MonoBehaviour
     // How much is bet
     int pot = 0;
 
+    // Health
+    public GameObject playerHealth1;
+    public GameObject playerHealth2;
+    public GameObject playerHealth3;
+    public GameObject playerHealth4;
+
+    public GameObject dealerHealth1;
+    public GameObject dealerHealth2;
+    public GameObject dealerHealth3;
+    public GameObject dealerHealth4;
+    public GameObject dealerHealth5;
+    public GameObject dealerHealth6;
+    public GameObject dealerHealth7;
+    public GameObject dealerHealth8;
+    public GameObject dealerHealth9;
+    public GameObject dealerHealth10;
+
     void Start()
     {
+        RemoveItemDescription();
+
+        returnMain.gameObject.SetActive(false);
+        gameEnd.gameObject.SetActive(false);
+
         // Add on click listeners to the buttons
         dealBtn.onClick.AddListener(() => DealClicked());
         hitBtn.onClick.AddListener(() => HitClicked());
@@ -89,9 +124,122 @@ public class GameManager : MonoBehaviour
         cigar.onClick.AddListener(() => Cigar());
         glove.onClick.AddListener(() => Glove());
 
+        hitBtn.gameObject.SetActive(false);
+        standBtn.gameObject.SetActive(false);
+
         DisableCheat();
         EnableCheat();
         InitializeCheatText();
+
+        playerScript.money = playerHealth;
+        dealerScript.money = dealerHealth;
+
+        dealerCashText.text = "Dealer Health: " + dealerScript.GetMoney().ToString();
+        cashText.text = "Your Health: " + playerScript.GetMoney().ToString();
+
+        mainText.text = "";
+        scoreText.text = "";
+        dealerScoreText.text = "";
+
+        playerHealth1.gameObject.SetActive(true);
+        playerHealth2.gameObject.SetActive(true);
+        playerHealth3.gameObject.SetActive(true);
+        playerHealth4.gameObject.SetActive(true);
+
+        dealerHealth1.gameObject.SetActive(true);
+        dealerHealth2.gameObject.SetActive(true);
+        dealerHealth3.gameObject.SetActive(true);
+        dealerHealth4.gameObject.SetActive(true);
+        dealerHealth5.gameObject.SetActive(true);
+
+        if (dealerHealth > 5)
+        {
+            dealerHealth6.gameObject.SetActive(true);
+            dealerHealth7.gameObject.SetActive(true);
+        }
+        else
+        {
+            dealerHealth6.gameObject.SetActive(false);
+            dealerHealth7.gameObject.SetActive(false);
+        }
+
+        if (dealerHealth > 8)
+        {
+            dealerHealth8.gameObject.SetActive(true);
+            dealerHealth9.gameObject.SetActive(true);
+            dealerHealth10.gameObject.SetActive(true);
+
+        }
+        else
+        {
+            dealerHealth8.gameObject.SetActive(false);
+            dealerHealth9.gameObject.SetActive(false);
+            dealerHealth10.gameObject.SetActive(false);
+        }
+
+        // Gain 3 items
+        if (startingItems == 1)
+        {
+            magnifyingGlassN++;
+            sunGlassN++;
+            daggerN++;
+            swordN++;
+            rustySwordN++;
+            hookN++;
+            cigarN++;
+            gloveN++;
+        }
+
+        if (startingItems == 3)
+        {
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+        }
+
+        if (startingItems == 5)
+        {
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+        }
+
+        if (startingItems == 8)
+        {
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+            AddItem();
+        }
+
+        InitializeCheatText();
+
     }
 
     private void DealClicked()
@@ -102,15 +250,15 @@ public class GameManager : MonoBehaviour
         playerScript.ResetHand();
         dealerScript.ResetHand();
         // Hide deal hand score at start of deal
-        dealerScoreText.gameObject.SetActive(false);
+        // dealerScoreText.gameObject.SetActive(false);
         mainText.gameObject.SetActive(false);
-        dealerScoreText.gameObject.SetActive(false);
+        // dealerScoreText.gameObject.SetActive(false);
         GameObject.Find("Deck").GetComponent<DeckScript>().Shuffle();
         playerScript.StartHand();
         dealerScript.StartHand();
         // Update the scores displayed
-        scoreText.text = "Hand: " + playerScript.handValue.ToString();
-        dealerScoreText.text = "Hand: " + dealerScript.handValue.ToString();
+        // scoreText.text = "Hand: " + playerScript.handValue.ToString();
+        // dealerScoreText.text = "Hand: " + dealerScript.handValue.ToString();
         // Place card back on dealer card, hide card
         hideCard.GetComponent<Renderer>().enabled = true;
         // Adjust buttons visibility
@@ -124,11 +272,10 @@ public class GameManager : MonoBehaviour
         EnableCheat();
 
         // Set standard pot size
-        pot = 2;
-        betsText.text = "Bets: $" + (pot/2).ToString();
-        playerScript.AdjustMoney(-1);
-        cashText.text = "$" + playerScript.GetMoney().ToString();
+        dealerCashText.text = "Dealer Health: " + dealerScript.GetMoney().ToString();
+        cashText.text = "Your Health: " + playerScript.GetMoney().ToString();
 
+        CheckBust();
     }
 
     private void HitClicked()
@@ -160,8 +307,12 @@ public class GameManager : MonoBehaviour
         while (dealerScript.handValue < 17 && dealerScript.cardIndex < 10)
         {
             dealerScript.GetCard();
-            dealerScoreText.text = "Hand: " + dealerScript.handValue.ToString();
-            if (dealerScript.handValue > 20) RoundOver();
+            // dealerScoreText.text = "Hand: " + dealerScript.handValue.ToString();
+            if (dealerScript.handValue > 20)
+            {
+                RoundOver();
+                return;
+            }
         }
         RoundOver();
     }
@@ -175,32 +326,31 @@ public class GameManager : MonoBehaviour
         bool player21 = playerScript.handValue == 21;
         bool dealer21 = dealerScript.handValue == 21;
 
-        dealerScoreText.text = "Hand: " + dealerScript.handValue.ToString();
+        // dealerScoreText.text = "Hand: " + dealerScript.handValue.ToString();
         // If stand has been clicked less than twice, no 21s or busts, quit function
-        if (standClicks < 2 && !playerBust && !dealerBust && !player21 && !dealer21) return;
+        if (standClicks < 2 && !playerBust && !dealerBust && !player21) return;
         bool roundOver = true;
         // All bust, bets returned
         if (playerBust && dealerBust)
         {
             mainText.text = "All Bust.";
-            playerScript.AdjustMoney(pot / 2);
         }
         // if player busts, dealer didnt, or if dealer has more points, dealer wins
         else if (playerBust || (!dealerBust && dealerScript.handValue > playerScript.handValue))
         {
             mainText.text = "Dealer wins!";
+            playerScript.AdjustMoney(-1);
         }
         // if dealer busts, player didnt, or player has more points, player wins
         else if (dealerBust || playerScript.handValue > dealerScript.handValue)
         {
             mainText.text = "You win!";
-            playerScript.AdjustMoney(pot);
+            dealerScript.AdjustMoney(-1);
         }
         //Check for tie, return bets
         else if (playerScript.handValue == dealerScript.handValue)
         {
             mainText.text = "Tied.";
-            playerScript.AdjustMoney(pot / 2);
         }
         else
         {
@@ -213,13 +363,147 @@ public class GameManager : MonoBehaviour
             standBtn.gameObject.SetActive(false);
             dealBtn.gameObject.SetActive(true);
             mainText.gameObject.SetActive(true);
-            dealerScoreText.gameObject.SetActive(true);
+            // dealerScoreText.gameObject.SetActive(true);
             hideCard.GetComponent<Renderer>().enabled = false;
-            cashText.text = "$" + playerScript.GetMoney().ToString();
+            dealerCashText.text = "Dealer Health: " + dealerScript.GetMoney().ToString();
+            cashText.text = "Your Health: " + playerScript.GetMoney().ToString();
             standClicks = 0;
         }
 
         topDeck.SetActive(false);
+
+        AddItem();
+        CheckHealth();
+        CheckGameOver();
+    }
+
+    void CheckHealth()
+    {
+        if (playerScript.GetMoney() < 4)
+        {
+            playerHealth4.gameObject.SetActive(false);
+        }
+        if (playerScript.GetMoney() < 3)
+        {
+            playerHealth3.gameObject.SetActive(false);
+        }
+        if (playerScript.GetMoney() < 2)
+        {
+            playerHealth2.gameObject.SetActive(false);
+        }
+        if (playerScript.GetMoney() < 1)
+        {
+            playerHealth1.gameObject.SetActive(false);
+        }
+
+        if (dealerScript.GetMoney() < 10)
+        {
+            dealerHealth10.gameObject.SetActive(false);
+        }
+        if (dealerScript.GetMoney() < 9)
+        {
+            dealerHealth9.gameObject.SetActive(false);
+        }
+        if (dealerScript.GetMoney() < 8)
+        {
+            dealerHealth8.gameObject.SetActive(false);
+        }
+        if (dealerScript.GetMoney() < 7)
+        {
+            dealerHealth7.gameObject.SetActive(false);
+        }
+        if (dealerScript.GetMoney() < 6)
+        {
+            dealerHealth6.gameObject.SetActive(false);
+        }
+        if (dealerScript.GetMoney() < 5)
+        {
+            dealerHealth5.gameObject.SetActive(false);
+        }
+        if (dealerScript.GetMoney() < 4)
+        {
+            dealerHealth4.gameObject.SetActive(false);
+        }
+        if (dealerScript.GetMoney() < 3)
+        {
+            dealerHealth3.gameObject.SetActive(false);
+        }
+        if (dealerScript.GetMoney() < 2)
+        {
+            dealerHealth2.gameObject.SetActive(false);
+        }
+        if (dealerScript.GetMoney() < 1)
+        {
+            dealerHealth1.gameObject.SetActive(false);
+        }
+    }
+
+    private int round = 0;
+    void AddItem()
+    {
+        round++;
+
+        if (round == 2)
+        {
+            System.Random random = new System.Random();
+            int rint = random.Next(0, 20);
+
+            if (rint >= 0 && rint <= 7) magnifyingGlassN++;
+            else if (rint >= 8 && rint <= 8) sunGlassN++;
+            else if (rint >= 9 && rint <= 10) daggerN++;
+            else if (rint >= 11 && rint <= 12) swordN++;
+            else if (rint >= 13 && rint <= 13) rustySwordN++;
+            else if (rint >= 14 && rint <= 14) hookN++;
+            else if (rint >= 15 && rint <= 16) cigarN++;
+            else if (rint >= 17 && rint <= 19) gloveN++;
+
+            InitializeCheatText();
+            round = 0;
+        }
+    }
+
+    void CheckGameOver()
+    {
+        if (playerScript.money == 0)
+        {
+            gameEnd.text = "Game Over!.";
+            GameOver();
+        }
+        else if (dealerScript.money == 0)
+        {
+            gameEnd.text = "Won Stage!";
+            GameOver();
+        }
+    }
+
+    void Won()
+    {
+        DisableCheat();
+        DisableButton();
+        gameEnd.text = "Won Stage!";
+
+        mainText.text = "";
+    }
+
+    void GameOver()
+    {
+        dealBtn.gameObject.SetActive(false);
+        DisableCheat();
+        DisableButton();
+        gameEnd.gameObject.SetActive(true);
+        returnMain.gameObject.SetActive(true);
+        returnMain.onClick.AddListener(() => ReturnClicked());
+        mainText.text = "";
+    }
+
+    void ReturnClicked()
+    {
+        Debug.Log("CurrentStage " + GameStage.stage);
+        Debug.Log("CurrentMode " + GameStage.mode);
+        if (GameStage.mode == 0 && gameEnd.text == "Won Stage!") GameStage.stage = stage + 1;
+        Debug.Log("UptStage " + GameStage.stage);
+        SceneManager.LoadScene("Map");
+        returnMain.gameObject.SetActive(false);
     }
 
     // Add money to pot if bet clicked
@@ -230,13 +514,12 @@ public class GameManager : MonoBehaviour
         playerScript.AdjustMoney(-intBet);
         cashText.text = "$" + playerScript.GetMoney().ToString();
         pot += (intBet * 2);
-        betsText.text = "Bets: $" + (pot/2).ToString();
     }
 
     // Added Cheats
     void MagnifyingGlass()
     {
-        if (addCheat) magnifyingGlassN++;
+        if (addCheat) return;
         else
         {
             int cardValue = deckScript.TopDeck(topDeck.GetComponent<CardScript>());
@@ -244,30 +527,32 @@ public class GameManager : MonoBehaviour
             topDeck.SetActive(true);
             magnifyingGlassN--;
         }
+        CheckHaveItem();
         InitializeCheatText();
     }
 
     void SunGlass()
     {
-        if (addCheat) sunGlassN++;
+        if (addCheat) return;
         else
         {
             hideCard.GetComponent<Renderer>().enabled = false;
             sunGlassN--;
         }
+        CheckHaveItem();
         InitializeCheatText();
     }
 
     void Dagger()
     {
-        if (addCheat) daggerN++;
+        if (addCheat) return;
         else
         {
             // Check that there is still room on the table
             if (playerScript.cardIndex <= 10)
             {
                 playerScript.GetHalfCard();
-                scoreText.text = "Hand: " + playerScript.handValue.ToString();
+                // scoreText.text = "Hand: " + playerScript.handValue.ToString();
                 if (playerScript.handValue > 20)
                 {
                     standBtnText.text = "Black Jack!";
@@ -275,17 +560,17 @@ public class GameManager : MonoBehaviour
                     DisableCheat();
                     RoundOver();
                 }
+                topDeck.SetActive(false);
+                daggerN--;
             }
-
-            topDeck.SetActive(false);
-            daggerN--;
         }
+        CheckHaveItem();
         InitializeCheatText();
     }
 
     void Sword()
     {
-        if (addCheat) swordN++;
+        if (addCheat) return;
         else
         {
             DisableCheat();
@@ -294,51 +579,58 @@ public class GameManager : MonoBehaviour
             selectScreen.ChooseDestoryCard(playerScript.hand[0], playerScript.hand[1]);
             swordN--;
         }
+        CheckHaveItem();
         InitializeCheatText();
     }
 
     void RustySword()
     {
-        if (addCheat) rustySwordN++;
+        if (addCheat) return;
         else
         {
             DisableCheat();
             DisableButton();
             selectScreen.gameObject.SetActive(true);
             selectScreen.ChooseDestoryOppoCard(dealerScript.hand[0], dealerScript.hand[1]);
+            topDeck.SetActive(false);
             rustySwordN--;
         }
+        CheckHaveItem();
         InitializeCheatText();
     }
 
     void Hook()
     {
-        if (addCheat) hookN++;
+        if (addCheat) return;
         else
         {
             deckScript.currentIndex++;
             topDeck.SetActive(false);
             hookN--;
         }
+        CheckHaveItem();
         InitializeCheatText();
     }
 
     void Cigar()
     {
-        if (addCheat) cigarN++;
+        if (addCheat) return;
         else
         {
+            playerScript.ResetAllHandAngle();
             playerScript.ResetHand();
             playerScript.StartHand();
+            topDeck.SetActive(false);
             CheckBust();
             cigarN--;
         }
+        CheckHaveItem();
         InitializeCheatText();
     }
 
     void Glove()
     {
-        if (addCheat) gloveN++;
+        if (addCheat) return;
         else
         {
             DisableCheat();
@@ -347,6 +639,7 @@ public class GameManager : MonoBehaviour
             selectScreen.ChooseGlove(playerScript.hand[0], playerScript.hand[1]);
             gloveN--;
         }
+        CheckHaveItem();
         InitializeCheatText();
     }
 
@@ -441,25 +734,120 @@ public class GameManager : MonoBehaviour
 
     public void CheckBust()
     {
-        scoreText.text = "Hand: " + playerScript.handValue.ToString();
+        // scoreText.text = "Hand: " + playerScript.handValue.ToString();
         if (playerScript.handValue > 20)
         {
             standBtnText.text = "Black Jack!";
             if (playerScript.handValue > 21) standBtnText.text = "Busted!";
             DisableCheat();
-            RoundOver();
         }
+        RoundOver();
     }
 
     public void CheckDealerBust()
     {
-        dealerScoreText.text = "Hand: " + dealerScript.handValue.ToString();
+        // dealerScoreText.text = "Hand: " + dealerScript.handValue.ToString();
         if (dealerScript.handValue > 20)
         {
-            standBtnText.text = "Black Jack!";
-            if (dealerScript.handValue > 21) standBtnText.text = "Busted!";
             DisableCheat();
-            RoundOver();
         }
+        RoundOver();
+    }
+
+    public GameObject itemDescription;
+    public SpriteRenderer item1;
+    public SpriteRenderer item2;
+    public SpriteRenderer item3;
+    public SpriteRenderer item4;
+    public SpriteRenderer item5;
+    public SpriteRenderer item6;
+    public SpriteRenderer item7;
+    public SpriteRenderer item8;
+
+    void CheckHaveItem()
+    {
+        if (magnifyingGlassN == 0)
+        {
+            item1.enabled = false;
+        }
+        if (sunGlassN == 0)
+        {
+            item2.enabled = false;
+        }
+        if (gloveN == 0)
+        {
+            item3.enabled = false;
+        }
+        if (cigarN == 0)
+        {
+            item4.enabled = false;
+        }
+        if (hookN == 0)
+        {
+            item5.enabled = false;
+        }
+        if (swordN == 0)
+        {
+            item6.enabled = false;
+        }
+        if (rustySwordN == 0)
+        {
+            item7.enabled = false;
+        }
+        if (daggerN == 0)
+        {
+            item8.enabled = false;
+        }
+    }
+
+    public void DisplayItemDescription(string itemName)
+    {
+        itemDescription.SetActive(true);
+
+        if (itemName == "MagGlass")
+        {
+            item1.enabled = true;
+        }
+        if (itemName == "SunGlass")
+        {
+            item2.enabled = true;
+        }
+        if (itemName == "Glove")
+        {
+            item3.enabled = true;
+        }
+        if (itemName == "Cigar")
+        {
+            item4.enabled = true;
+        }
+        if (itemName == "Hook")
+        {
+            item5.enabled = true;
+        }
+        if (itemName == "Sword")
+        {
+            item6.enabled = true;
+        }
+        if (itemName == "RustySword")
+        {
+            item7.enabled = true;
+        }
+        if (itemName == "Dagger")
+        {
+            item8.enabled = true;
+        }
+
+    }
+
+    public void RemoveItemDescription()
+    {
+        item1.enabled = false;
+        item2.enabled = false;
+        item3.enabled = false;
+        item4.enabled = false;
+        item5.enabled = false;
+        item6.enabled = false;
+        item7.enabled = false;
+        item8.enabled = false;
     }
 }

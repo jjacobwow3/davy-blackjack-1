@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
-
 public class Select : MonoBehaviour
 {
     public Button card1;
@@ -68,16 +67,16 @@ public class Select : MonoBehaviour
     {
         playerScript.RemoveCard(0);
         gameManager.topDeck.SetActive(false);
-        gameManager.CheckBust();
         gameManager.DisableSelect();
+        gameManager.CheckBust();
     }
 
     public void DesCard2()
     {
         playerScript.RemoveCard(1);
         gameManager.topDeck.SetActive(false);
-        gameManager.CheckBust();
         gameManager.DisableSelect();
+        gameManager.CheckBust();
     }
     public void ChooseDestoryOppoCard(GameObject choice1, GameObject choice2)
     {
@@ -97,16 +96,16 @@ public class Select : MonoBehaviour
         dealerScript.RemoveCard(0);
         gameManager.topDeck.SetActive(false);
         gameManager.hideCard.GetComponent<Renderer>().enabled = false;
-        gameManager.CheckBust();
         gameManager.DisableSelect();
+        gameManager.CheckBust();
     }
 
     public void DesOppoCard2()
     {
         dealerScript.RemoveCard(1);
         gameManager.topDeck.SetActive(false);
-        gameManager.CheckBust();
         gameManager.DisableSelect();
+        gameManager.CheckBust();
     }
 
     public void ChooseGlove(GameObject choice1, GameObject choice2)
@@ -175,8 +174,8 @@ public class Select : MonoBehaviour
             playerScript.ChangeCard(1, temp2, newSprite2);
             dealerScript.ChangeCard(0, temp1, newSprite1);
         }
-        gameManager.CheckBust();
         gameManager.DisableSelect();
+        gameManager.CheckBust();
     }
 
     public void Glove4()
@@ -203,7 +202,7 @@ public class Select : MonoBehaviour
             playerScript.ChangeCard(1, temp2, newSprite2);
             dealerScript.ChangeCard(1, temp1, newSprite1);
         }
-        gameManager.CheckBust();
         gameManager.DisableSelect();
+        gameManager.CheckBust();
     }
 }
