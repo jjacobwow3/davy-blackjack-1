@@ -1,4 +1,4 @@
-![alt text](https://github.com/jjacobwow3/davy-blackjack-1/blob/main/Assets/Sprites/Enemies/SharkSmall.png)
+<p style="text-align: center;">![alt text](https://github.com/jjacobwow3/davy-blackjack-1/blob/main/Assets/Sprites/Enemies/SharkSmall.png)</p>
 ## Davy Blackjack
 In a world of thieving pirates, will you come out on top as the best blackjack player? Use your tools to your advantage...
 ## How to Run
